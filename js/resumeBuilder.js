@@ -179,14 +179,14 @@ var projects = {
 			"title": "Blackjack",
 			"dates": "2015",
 			"description": "Demo designed to showcase how learners could ask subject matter experts (SME) a question that created a SMS message which was sent to the SME. Once the SME responded to the text message, the learner would receive a visual notification that their question had been answered. This demo does not show the SMS capability as I've disabled my Twilio account, but the course is still fun.",
-			"images": ["images/BJ1.png", "images/BJ2.png"],
+			"images": ["images/bj11.png", "images/bj21.png"],
 			"link": "https://dl.dropboxusercontent.com/u/13858457/blackjack%20-%20Storyline%20output/story.html"
 		},
 		{
 			"title": "Heat Illness Prevention",
 			"dates": "2014",
 			"description": "Course developed to want K-12 athletes and coaches about the dangers of heat illness",
-			"images": ["images/HI1.png", "images/HI2.png"],
+			"images": ["images/hi11.png", "images/hi21.png"],
 			"link": "https://dl.dropboxusercontent.com/u/13858457/HeatIllnessPrevention/story.html"
 		}
 	],
