@@ -1,0 +1,95 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Donuts in Seattle</title>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
+    <script src="js/vendor/sha1.js"></script>
+    <script src="js/vendor/oauth-signature.min.js"></script>
+    <style>
+        #pic, #name {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<h1 id="name"></h1>
+<img id="pic">
+<img src="https://s3-media3.fl.yelpcdn.com/assets/srv0/developer_pages/65526d1a519b/assets/img/Powered_By_Yelp_Red.png">
+<script type="text/javascript">
+    var auth = {
+        //
+        // Update with your auth tokens.
+        //
+        consumerKey : "K_zuF0VGiLNuojOIjC4fIQ",
+        consumerSecret : "vjHgOg4nKwoJEdymYz9LMfhaKEo",
+        accessToken : "mMbdBF5TVxH4PxJ5-fR57iuG03imVBeQ",
+        // This example is a proof of concept, for how to use the Yelp v2 API with javascript.
+        // You wouldn't actually want to expose your access token secret like this in a real application.
+        accessTokenSecret : "_y9vCfI-5Jrk9V1l5M4Kwj1Nvq8",
+        serviceProvider : {
+            signatureMethod : "HMAC-SHA1"
+        }
+    };
+    var terms = 'donuts';
+    var near = 'Seattle';
+    var accessor = {
+        consumerSecret : auth.consumerSecret,
+        tokenSecret : auth.accessTokenSecret
+    };
+    parameters = [];
+    parameters.push(['term', terms]);
+    parameters.push(['location', near]);
+    parameters.push(['callback', 'cb']);
+    parameters.push(['oauth_consumer_key', auth.consumerKey]);
+    parameters.push(['oauth_consumer_secret', auth.consumerSecret]);
+    parameters.push(['oauth_token', auth.accessToken]);
+    parameters.push(['oauth_signature_method', 'HMAC-SHA1']);
+    var message = {
+        'action' : 'http://api.yelp.com/v2/search',
+        'method' : 'GET',
+        'parameters' : parameters
+    };
+    OAuth.setTimestampAndNonce(message);
+    OAuth.SignatureMethod.sign(message, accessor);
+    var parameterMap = OAuth.getParameterMap(message.parameters);
+    console.log(parameterMap);
+    var DonutShop = function(name, pic) {
+        this.name = name;
+        this.pic = pic;
+    }
+    $(document).ready(function() {
+        var donutShops = [];
+        var current = 0;
+        $.ajax({
+            cache: true,
+            'url' : message.action,
+            'data' : parameterMap,
+            'dataType' : 'jsonp',
+            'jsonpCallback' : 'cb',
+            'success' : function(data, textStats, XMLHttpRequest) {
+                console.log(data);
+                for (var i = 0; i < data.businesses.length; i++) {
+                    donutShops.push(new DonutShop(data.businesses[i].name, data.businesses[i].image_url));
+                }
+                console.log(donutShops);
+                $("#name").text(donutShops[current].name);
+                $("#pic").attr("src", donutShops[current].pic);
+            }
+        });
+        $("#pic").on("swiperight", function() {
+            current = (current + 1) % donutShops.length;
+            $("#name").text(donutShops[current].name);
+            $("#pic").attr("src", donutShops[current].pic);
+        });
+        $("#pic").on("swipeleft", function() {
+        current = ((current - 1) + donutShops.length) % donutShops.length;
+        $("#name").text(donutShops[current].name);
+        $("#pic").attr("src", donutShops[current].pic);
+    });
+    });
+</script>
+</body>
+</html>

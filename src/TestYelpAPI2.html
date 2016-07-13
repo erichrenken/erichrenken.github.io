@@ -1,0 +1,70 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Test2</title>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+    <script src="js/vendor/sha1.js"></script>
+    <script src="js/vendor/oauth-signature.min.js"></script>
+    <style>
+        #pic, #name {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<h1 id="name"></h1>
+<img id="pic">
+<img src="https://s3-media3.fl.yelpcdn.com/assets/srv0/developer_pages/65526d1a519b/assets/img/Powered_By_Yelp_Red.png">
+<script type="text/javascript">
+    var auth = {
+        consumerKey : "wCVnOl09BXrk7KQD0fk15g",
+        consumerSecret : "0xSvJbs-X4AL9DD1e73IB_hTwM4",
+        accessToken : "k5OZxFn6h2m8FXR-tCmu7JXvVKIFx2Qk",
+        accessTokenSecret : "y-44NCWbBAORfAzI_dMru2R0aQ0",
+        serviceProvider : {
+            signatureMethod : "HMAC-SHA1"
+        }
+    };
+
+    var terms = 'food';
+    var near = 'San+Francisco';
+
+    var accessor = {
+        consumerSecret : auth.consumerSecret,
+        tokenSecret : auth.accessTokenSecret
+    };
+    parameters = [];
+    parameters.push(['term', terms]);
+    parameters.push(['location', near]);
+    parameters.push(['callback', 'cb']);
+    parameters.push(['oauth_consumer_key', auth.consumerKey]);
+    parameters.push(['oauth_consumer_secret', auth.consumerSecret]);
+    parameters.push(['oauth_token', auth.accessToken]);
+    parameters.push(['oauth_signature_method', 'HMAC-SHA1']);
+
+    var message = {
+        'action' : 'http://api.yelp.com/v2/search',
+        'method' : 'GET',
+        'parameters' : parameters
+    };
+
+    OAuth.setTimestampAndNonce(message);
+    OAuth.SignatureMethod.sign(message, accessor);
+
+    var parameterMap = OAuth.getParameterMap(message.parameters);
+    console.log(parameterMap);
+
+    $.ajax({
+        'url' : message.action,
+        'data' : parameterMap,
+        'dataType' : 'jsonp',
+        'jsonpCallback' : 'cb',
+        'success' : function(data, textStats, XMLHttpRequest) {
+            console.log(data);
+        }
+    });
+
+</script>
+</body>
+</html>
